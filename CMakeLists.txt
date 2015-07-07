@@ -1,4 +1,4 @@
-module_version(1.0)
+module_version(1.1)
 
 # Download demo data
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/rabbit.tif)

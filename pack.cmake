@@ -12,10 +12,18 @@ else()
         )
 endif()
 
+file(INSTALL DESTINATION ${PACKAGE_DIR}/modules/volrend
+    TYPE FILE
+    FILES
+        ${SOURCE_DIR}/modules/volrend/volumerenderer.fs
+        ${SOURCE_DIR}/modules/volrend/volumerenderer.vs
+    )
+
 # Create volrend example package
 set(PACKAGE_NAME volrend.demo)
 set(PACKAGE_DISPLAY_NAME "Volrend Demo")
 set(PACKAGE_DESCRIPTION "Sample data and script for the volrend module")
+set(PACKAGE_DEPENDENCIES "")
 setup_package()
 file(INSTALL DESTINATION ${PACKAGE_DIR}/modules/volrend
     TYPE FILE
