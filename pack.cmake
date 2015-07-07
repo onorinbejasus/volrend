@@ -4,7 +4,7 @@ if(WIN32)
         FILES
             ${BIN_DIR}/volrend.pyd
         )
-else
+else()
     file(INSTALL DESTINATION ${PACKAGE_DIR}/bin
         TYPE FILE
         FILES
