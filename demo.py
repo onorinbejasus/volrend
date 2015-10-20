@@ -2,6 +2,8 @@ import volrend
 
 vr = volrend.initialize()
 vr.loadTiff('volrend/rabbit.tif')
+vr.loadRaw('volrend/divergence.raw', 193, 192, 193)
+
 
 # move camera back a bit
 getDefaultCamera().translate(Vector3(0, 0, 20), Space.Local)

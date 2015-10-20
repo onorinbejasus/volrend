@@ -30,6 +30,62 @@ public:
 
     virtual void initializeRenderer(Renderer* r);
 
+    void loadRaw(const String& file, int w, int h, int slices)
+    {
+      // total size of the volume
+      size_t npixels;
+
+      // min/max unsigned values
+      uint16_t min = 65000, max = 0;
+
+      String filePath;
+      if(!DataManager::findFile(file, filePath))
+      {
+          ofwarn("[VolumeRenderModule] Could not find file: %1%", %file);
+          return;
+      }
+
+      // set the total size of the data
+      npixels = w * h * slices;
+
+      // initialize the data structure to hold the incoming data
+      // rasterf = (float*)malloc(npixels * sizeof(float));
+      // if(!rasterf)
+      // {
+      //     oerror("[VolumeRenderModule] Out of Memory");
+      //     return;
+      // }
+
+      // can probably use an omegalib utility, but we can fix that later
+
+      // read all of the values into the array
+      // FILE *fp = fopen(filePath.c_str(), "rb");
+      //
+      // uint16_t *data = (uint16_t*)malloc(npixels * sizeof(uint16_t));
+	    // size_t read = fread(data, 1, npixels * sizeof(uint16_t), fp);
+      // fclose(fp);
+      //
+      // // iterate over all of the values that have been read in
+      //   for(int slice = 0; slice < slices; slice++)
+      //   {
+      //       for(int x = 0; x < w; x++)
+      //       {
+      //           for(int y = 0; y < h; y++)
+      //           {
+      //               int index = slice*w*h + x*w + y;
+      //               uint16_t curVal = *(data+index);
+      //               // x + WIDTH * (y + DEPTH * z)
+      //               rasterf[slice*w*h + x*w + y] = float(*(data+index));
+      //               if(curVal > max) max = curVal;
+      //               if(curVal < min) min = curVal;
+      //           }
+      //       }
+      //   }
+
+        ofmsg("[VolumeRenderModule: %1%] slices:<%2%>  width:<%3%>  height:<%4%> ",
+            %file %slices %w %h );
+    }
+
     void loadTiff(const String& file)
     {
         size_t npixels;
@@ -97,11 +153,11 @@ public:
         // Compute the normals
         float maxMag = 0.f;
         norms = (float*)malloc(npixels * 4 * sizeof(float));
-        for(int z = 0; z < dircount; z++) 
+        for(int z = 0; z < dircount; z++)
         {
-            for(int y = 0; y < h; y++) 
+            for(int y = 0; y < h; y++)
             {
-                for(int x = 0; x < w; x++) 
+                for(int x = 0; x < w; x++)
                 {
                     int curIx = 4 * (z*h*w + y*w + x);
                     int curfIx = z*h*w + y*w + x;
@@ -123,7 +179,7 @@ public:
                         norms[curIx + 2] /= nm;
                         if(nm > maxMag) maxMag = nm;
                     }
-                    //if (nm != 0) cerr << "nm: " << norms[curIx+3] << endl;                                                             
+                    //if (nm != 0) cerr << "nm: " << norms[curIx+3] << endl;
                 }
             }
         }
@@ -170,10 +226,10 @@ public:
 class VolumeRenderPass : public RenderPass
 {
 public:
-    VolumeRenderPass(Renderer* client, VolumeRenderModule* vrm) : 
+    VolumeRenderPass(Renderer* client, VolumeRenderModule* vrm) :
         RenderPass(client, "VolumeRenderPass"),
         module(vrm) {}
-    
+
     virtual void initialize()
     {
         DrawInterface* di = getClient()->getRenderer();
@@ -197,7 +253,7 @@ public:
 
         glGenTextures(1, &volBlock.texName);
 
-        volBlock.size.x = module->sizeX; // * BLOCK_SCALE;   // rabbit brain 
+        volBlock.size.x = module->sizeX; // * BLOCK_SCALE;   // rabbit brain
         volBlock.size.y = module->sizeY; // * BLOCK_SCALE;   // rabbit brain
         volBlock.size.z = module->sizeZ; // * BLOCK_SCALE;   // rabbit brain
 
@@ -233,10 +289,10 @@ public:
         const int cmapOffset = .2*cmapWidth;
         GLubyte raster_cmap[cmapWidth][4];
         double phaseShift = 120 * (Math::Pi / 180.0);
-        for(int i = 0; i<cmapWidth; i++) 
+        for(int i = 0; i<cmapWidth; i++)
         {
-            double redRad = ((i + cmapOffset) / ((cmapWidth - 1)*.5))*(2 * Math::Pi);  // Current radian (for red channel)                         
-            raster_cmap[i][0] = GLubyte(255 * (cos(redRad) / 2.0 + 0.5));  // map cos from [-1, 1] to [0, 1]                          
+            double redRad = ((i + cmapOffset) / ((cmapWidth - 1)*.5))*(2 * Math::Pi);  // Current radian (for red channel)
+            raster_cmap[i][0] = GLubyte(255 * (cos(redRad) / 2.0 + 0.5));  // map cos from [-1, 1] to [0, 1]
             raster_cmap[i][1] = GLubyte(255 * (cos(redRad + phaseShift) / 2.0 + 0.5));
             raster_cmap[i][2] = GLubyte(255 * (cos(redRad + (2 * phaseShift)) / 2.0 + 0.5));
             raster_cmap[i][3] = 255;
@@ -258,7 +314,7 @@ public:
         float sldr = .278f;
         const int amapWidth = 2048;
         GLfloat raster_amap[amapWidth];
-        for(int i = 0; i<amapWidth; i++) 
+        for(int i = 0; i<amapWidth; i++)
         {
             raster_amap[i] = 0.2 * exp(-100 * ((i / float(amapWidth)) - sldr) * ((i / float(amapWidth)) - sldr));
         }
@@ -318,7 +374,7 @@ public:
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8_SNORM,
-                module->w, module->h, module->dircount,                // width, height, depth                                                        
+                module->w, module->h, module->dircount,                // width, height, depth
                 0, GL_RGBA, GL_FLOAT, module->norms);
             glUseProgram(volRendShaderProg);
             glUniform1i(volNormTexLoc, 4);
@@ -383,6 +439,7 @@ BOOST_PYTHON_MODULE(volrend)
     // OmegaViewer
     PYAPI_REF_BASE_CLASS(VolumeRenderModule)
         PYAPI_METHOD(VolumeRenderModule, loadTiff)
+        PYAPI_METHOD(VolumeRenderModule, loadRaw)
         ;
 
     def("initialize", initialize, PYAPI_RETURN_REF);
