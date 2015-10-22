@@ -30,62 +30,6 @@ public:
 
     virtual void initializeRenderer(Renderer* r);
 
-    void loadRaw(const String& file, int w, int h, int slices)
-    {
-      // total size of the volume
-      size_t npixels;
-
-      // min/max unsigned values
-      uint16_t min = 65000, max = 0;
-
-      String filePath;
-      if(!DataManager::findFile(file, filePath))
-      {
-          ofwarn("[VolumeRenderModule] Could not find file: %1%", %file);
-          return;
-      }
-
-      // set the total size of the data
-      npixels = w * h * slices;
-
-      // initialize the data structure to hold the incoming data
-      // rasterf = (float*)malloc(npixels * sizeof(float));
-      // if(!rasterf)
-      // {
-      //     oerror("[VolumeRenderModule] Out of Memory");
-      //     return;
-      // }
-
-      // can probably use an omegalib utility, but we can fix that later
-
-      // read all of the values into the array
-      // FILE *fp = fopen(filePath.c_str(), "rb");
-      //
-      // uint16_t *data = (uint16_t*)malloc(npixels * sizeof(uint16_t));
-	    // size_t read = fread(data, 1, npixels * sizeof(uint16_t), fp);
-      // fclose(fp);
-      //
-      // // iterate over all of the values that have been read in
-      //   for(int slice = 0; slice < slices; slice++)
-      //   {
-      //       for(int x = 0; x < w; x++)
-      //       {
-      //           for(int y = 0; y < h; y++)
-      //           {
-      //               int index = slice*w*h + x*w + y;
-      //               uint16_t curVal = *(data+index);
-      //               // x + WIDTH * (y + DEPTH * z)
-      //               rasterf[slice*w*h + x*w + y] = float(*(data+index));
-      //               if(curVal > max) max = curVal;
-      //               if(curVal < min) min = curVal;
-      //           }
-      //       }
-      //   }
-
-        ofmsg("[VolumeRenderModule: %1%] slices:<%2%>  width:<%3%>  height:<%4%> ",
-            %file %slices %w %h );
-    }
-
     void loadTiff(const String& file)
     {
         size_t npixels;
@@ -285,18 +229,56 @@ public:
             0, GL_ALPHA, GL_FLOAT, raster_rand);
 
         // color look up texture
-        const int cmapWidth = 2048;
-        const int cmapOffset = .2*cmapWidth;
+        const int cmapWidth = 6;
+        //const int cmapOffset = .2*cmapWidth;
+
         GLubyte raster_cmap[cmapWidth][4];
-        double phaseShift = 120 * (Math::Pi / 180.0);
-        for(int i = 0; i<cmapWidth; i++)
-        {
-            double redRad = ((i + cmapOffset) / ((cmapWidth - 1)*.5))*(2 * Math::Pi);  // Current radian (for red channel)
-            raster_cmap[i][0] = GLubyte(255 * (cos(redRad) / 2.0 + 0.5));  // map cos from [-1, 1] to [0, 1]
-            raster_cmap[i][1] = GLubyte(255 * (cos(redRad + phaseShift) / 2.0 + 0.5));
-            raster_cmap[i][2] = GLubyte(255 * (cos(redRad + (2 * phaseShift)) / 2.0 + 0.5));
-            raster_cmap[i][3] = 255;
-        }
+        // 0 -> (0,0,0)
+        raster_cmap[0][0] = GLubyte(255 * 0);
+        raster_cmap[0][1] = GLubyte(255 * 0);
+        raster_cmap[0][2] = GLubyte(255 * 0);
+        raster_cmap[0][3] = GLubyte(255 * 1);
+
+        // 25500 -> (0,0.3,0.3)
+        raster_cmap[1][0] = GLubyte(255 * 0);
+        raster_cmap[1][1] = GLubyte(255 * 0.3);
+        raster_cmap[1][2] = GLubyte(255 * 0.3);
+        raster_cmap[1][3] = GLubyte(255 * 1);
+
+        // 26500 -> (0.5,0.5,0.5)
+        raster_cmap[2][0] = GLubyte(255 * 0.5);
+        raster_cmap[2][1] = GLubyte(255 * 0.5);
+        raster_cmap[2][2] = GLubyte(255 * 0.5);
+        raster_cmap[2][3] = GLubyte(255 * 1);
+
+        // 27500 -> (1,1,1)
+        raster_cmap[3][0] = GLubyte(255 * 1);
+        raster_cmap[3][1] = GLubyte(255 * 1);
+        raster_cmap[3][2] = GLubyte(255 * 1);
+        raster_cmap[3][3] = GLubyte(255 * 1);
+
+        // 28500 -> (1,0.2,0.2)
+        raster_cmap[4][0] = GLubyte(255 * 1);
+        raster_cmap[4][1] = GLubyte(255 * 0.2);
+        raster_cmap[4][2] = GLubyte(255 * 0.2);
+        raster_cmap[4][3] = GLubyte(255 * 1);
+
+        // 65535 -> (1,0,0)
+        raster_cmap[5][0] = GLubyte(255 * 1);
+        raster_cmap[5][1] = GLubyte(255 * 0);
+        raster_cmap[5][2] = GLubyte(255 * 0);
+        raster_cmap[5][3] = GLubyte(255 * 1);
+
+        //double phaseShift = 120 * (Math::Pi / 180.0);
+
+        // for(int i = 0; i<cmapWidth; i++)
+        // {
+        //     double redRad = ((i + cmapOffset) / ((cmapWidth - 1)*.5))*(2 * Math::Pi);  // Current radian (for red channel)
+        //     raster_cmap[i][0] = GLubyte(255 * (cos(redRad) / 2.0 + 0.5));  // map cos from [-1, 1] to [0, 1]
+        //     raster_cmap[i][1] = GLubyte(255 * (cos(redRad + phaseShift) / 2.0 + 0.5));
+        //     raster_cmap[i][2] = GLubyte(255 * (cos(redRad + (2 * phaseShift)) / 2.0 + 0.5));
+        //     raster_cmap[i][3] = 255;
+        // }
 
         glActiveTexture(GL_TEXTURE2);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -311,13 +293,28 @@ public:
         glUniform1i(cmapTexLoc, 2);
         glEnable(GL_TEXTURE_1D);
 
-        float sldr = .278f;
-        const int amapWidth = 2048;
+        //float sldr = .278f;
+        const int amapWidth = 6;//2048;
         GLfloat raster_amap[amapWidth];
-        for(int i = 0; i<amapWidth; i++)
-        {
-            raster_amap[i] = 0.2 * exp(-100 * ((i / float(amapWidth)) - sldr) * ((i / float(amapWidth)) - sldr));
-        }
+
+        // 0 -> 0
+        raster_amap[0] = 0;
+        // 25000 -> 0
+        raster_amap[1] = 0;
+        // 25500 -> 0
+        raster_amap[2] = 0.1;
+        // 26301 -> 0.4
+        raster_amap[3] = 0.4;
+        // 39916 -> 0.94
+        raster_amap[4] = 0.94;
+        // 65535 -> 1
+        raster_amap[5] = 1.0;
+
+
+        // for(int i = 0; i<amapWidth; i++)
+        // {
+        //     raster_amap[i] = 0.2 * exp(-100 * ((i / float(amapWidth)) - sldr) * ((i / float(amapWidth)) - sldr));
+        // }
 
         glActiveTexture(GL_TEXTURE3);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -439,7 +436,8 @@ BOOST_PYTHON_MODULE(volrend)
     // OmegaViewer
     PYAPI_REF_BASE_CLASS(VolumeRenderModule)
         PYAPI_METHOD(VolumeRenderModule, loadTiff)
-        PYAPI_METHOD(VolumeRenderModule, loadRaw)
+                //PYAPI_METHOD(VolumeRenderModule, loadRaw)
+
         ;
 
     def("initialize", initialize, PYAPI_RETURN_REF);
