@@ -8,10 +8,10 @@ endif()
 
 
 add_definitions(-DFREEIMAGE_LIB)
-add_library(volrend MODULE 
+add_library(stress_tensor MODULE
 	volrend.cpp
     VolumeBlock.cpp
     VolumeBlock.h)
-	
-target_link_libraries(volrend omega FreeImage)
-declare_native_module(volrend)
+
+target_link_libraries(stress_tensor omega FreeImage)
+declare_native_module(stress_tensor)

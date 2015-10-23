@@ -68,24 +68,24 @@ void main()
       	float magDiff = norm.a * 8.0;
       	vec3  N = norm.xyz;
 
-      	vec3  lower_cmapColor = vec3(0.0f);
+      	vec4 lower_cmapColor = vec4(0.0);
 
-          if(scalar >= 25500.0f && scalar <= 26500.0f)
+        if(scalar >= 25500.0 && scalar <= 26500.0)
         {
-          lower_cmapColor = vec3(mix( texture1D(cmapTex, 25500.0f), texture1D(cmapTex, 26500.0f), scalar ));
+          lower_cmapColor = mix( texture1D(cmapTex, 25500.0), texture1D(cmapTex, 26500.0), scalar );
         }
 
-        else if(scalar <= 27500.0f)
+        else if(scalar <= 27500.0)
         {
-          lower_cmapColor = vec3(mix( texture1D(cmapTex, 26500.0f), texture1D(cmapTex, 27500.0f), scalar ));
+          lower_cmapColor = mix( texture1D(cmapTex, 26500.0), texture1D(cmapTex, 27500.0), scalar );
         }
 
-        else if(scalar <= 28500.0f)
+        else if(scalar <= 28500.0)
         {
-          lower_cmapColor = vec3(mix( texture1D(cmapTex, 27500.0f), texture1D(cmapTex, 28500.0f), scalar ));
+          lower_cmapColor = mix( texture1D(cmapTex, 27500.0), texture1D(cmapTex, 28500.0), scalar );
         }
         else{
-          lower_cmapColor = vec3(mix( texture1D(cmapTex, 28500.0), texture1D(cmapTex, 65535.0f), scalar ));
+          lower_cmapColor = mix( texture1D(cmapTex, 28500.0), texture1D(cmapTex, 65535.0), scalar );
         }
 
       	float diffuseLight = max(dot(L, N), 0.0);
@@ -99,7 +99,10 @@ void main()
       	alpha *= sampleRate;
       	alpha = min(alpha, 1.0);
 
+        //vec3 color = lower_cmapColor
+
       	rayColor += (1.0-rayColor.a) * vec4(((ambient + diffuse + specular)*alpha*magDiff), alpha*magDiff);
+
       }
 
       rayPos += rayStep;
