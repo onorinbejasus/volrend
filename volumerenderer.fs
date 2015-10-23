@@ -68,6 +68,7 @@ void main()
 	float magDiff = norm.a * 8.0;
 	vec3  N = norm.xyz;
 
+<<<<<<< HEAD
 	vec3  cmapColor = vec3(texture1D(cmapTex, scalar));
 
 	float diffuseLight = max(dot(L, N), 0.0);
@@ -77,11 +78,47 @@ void main()
 	vec3  specular      = vec3(specularLight); // also should mult by Ks, but it's 1.0
 
 	vec3 ambient = ambientLight; // also should mult by Ka, but it's 1.0
+=======
+      	vec4 lower_cmapColor = vec4(0.0);
+
+        if(scalar >= 25500.0 && scalar <= 26500.0)
+        {
+          lower_cmapColor = mix( texture1D(cmapTex, 25500.0), texture1D(cmapTex, 26500.0), scalar );
+        }
+
+        else if(scalar <= 27500.0)
+        {
+          lower_cmapColor = mix( texture1D(cmapTex, 26500.0), texture1D(cmapTex, 27500.0), scalar );
+        }
+
+        else if(scalar <= 28500.0)
+        {
+          lower_cmapColor = mix( texture1D(cmapTex, 27500.0), texture1D(cmapTex, 28500.0), scalar );
+        }
+        else{
+          lower_cmapColor = mix( texture1D(cmapTex, 28500.0), texture1D(cmapTex, 65535.0), scalar );
+        }
+>>>>>>> 3c4e4e2955341c7943f3ded82b431c5458bb9efb
 
 	alpha *= sampleRate;
 	alpha = min(alpha, 1.0);
 
+<<<<<<< HEAD
 	rayColor += (1.0-rayColor.a) * vec4(((ambient + diffuse + specular)*alpha*magDiff), alpha*magDiff);
+=======
+      	float specularLight = pow(max(dot(H, N), 0.0), n);
+      	vec3  specular      = vec3(specularLight); // also should mult by Ks, but it's 1.0
+
+      	vec3 ambient = ambientLight; // also should mult by Ka, but it's 1.0
+
+      	alpha *= sampleRate;
+      	alpha = min(alpha, 1.0);
+
+        //vec3 color = lower_cmapColor
+
+      	rayColor += (1.0-rayColor.a) * vec4(((ambient + diffuse + specular)*alpha*magDiff), alpha*magDiff);
+
+>>>>>>> 3c4e4e2955341c7943f3ded82b431c5458bb9efb
       }
 
       rayPos += rayStep;
