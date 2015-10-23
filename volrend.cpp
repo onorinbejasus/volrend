@@ -20,9 +20,9 @@ public:
         rasterf(NULL),
         rasterUpdated(false),
         // Default values (good for the sample rabbit brain data)
-        sizeX(1.0f),
+        sizeX(.84f),
         sizeY(1.0f),
-        sizeZ(1.0f),
+        sizeZ(.64f),
         scale(9.0f)
     {
         FreeImage_Initialise();
@@ -67,7 +67,7 @@ public:
         }
 
         // Read all pages
-        uint16_t min = 65535, max = 0;
+        uint16_t min = 65000, max = 0;
         for(int dirIx = 0; dirIx < dircount; dirIx++)
         {
             FIBITMAP* tifp = FreeImage_LockPage(tif, dirIx);
@@ -203,7 +203,7 @@ public:
 
         glUniform1i(volTexLoc, 0);
         //glUniform1f(volBlock.texCoordRLoc, 0.0f);
-        glUniform3f(volScaleLoc, 1.0f / 1.0f, 1.0f / 1.0f, 1.0f / 1.0f);
+        glUniform3f(volScaleLoc, 1 / .84f, 1 / 1.0f, 1 / .64f);
         glUniform1f(sampleRateLoc, 1.0f);
         glUniform2f(xSliceBoundsLoc, 0.0f, 1);
         glUniform2f(ySliceBoundsLoc, 0, 1);
