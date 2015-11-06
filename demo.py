@@ -2,7 +2,7 @@ import volrend
 import cyclops
 
 vr = volrend.initialize()
-vr.loadTiff('volrend2/divergence.tif')
+vr.loadTiff('volrend/divergence.tif')
 
 # move camera back a bit
 getDefaultCamera().setBackgroundColor(Color(0,0,0,0))
