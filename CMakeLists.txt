@@ -1,5 +1,5 @@
 module_version(1.1)
- 
+
 # Download demo data
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/rabbit.tif)
 	message(STATUS "Downloading volrend demo data...")
@@ -8,10 +8,10 @@ endif()
 
 
 add_definitions(-DFREEIMAGE_LIB)
-add_library(stress_tensor MODULE
+add_library(volrend MODULE 
 	volrend.cpp
     VolumeBlock.cpp
     VolumeBlock.h)
-
-target_link_libraries(stress_tensor omega FreeImage)
-declare_native_module(stress_tensor)
+	
+target_link_libraries(volrend omega FreeImage)
+declare_native_module(volrend)

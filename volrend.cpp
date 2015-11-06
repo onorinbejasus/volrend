@@ -228,9 +228,9 @@ public:
             128, 128,
             0, GL_ALPHA, GL_FLOAT, raster_rand);
 
-        // color look up texture
-        const int cmapWidth = 6;
-        //const int cmapOffset = .2*cmapWidth;
+            // color look up texture
+      const int cmapWidth = 6;
+      //const int cmapOffset = .2*cmapWidth;
 
         GLubyte raster_cmap[cmapWidth][4];
         // 0 -> (0,0,0)
@@ -269,17 +269,6 @@ public:
         raster_cmap[5][2] = GLubyte(255 * 0);
         raster_cmap[5][3] = GLubyte(255 * 1);
 
-        //double phaseShift = 120 * (Math::Pi / 180.0);
-
-        // for(int i = 0; i<cmapWidth; i++)
-        // {
-        //     double redRad = ((i + cmapOffset) / ((cmapWidth - 1)*.5))*(2 * Math::Pi);  // Current radian (for red channel)
-        //     raster_cmap[i][0] = GLubyte(255 * (cos(redRad) / 2.0 + 0.5));  // map cos from [-1, 1] to [0, 1]
-        //     raster_cmap[i][1] = GLubyte(255 * (cos(redRad + phaseShift) / 2.0 + 0.5));
-        //     raster_cmap[i][2] = GLubyte(255 * (cos(redRad + (2 * phaseShift)) / 2.0 + 0.5));
-        //     raster_cmap[i][3] = 255;
-        // }
-
         glActiveTexture(GL_TEXTURE2);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
         glGenTextures(1, &volBlock.cmapTexName);
@@ -309,12 +298,6 @@ public:
         raster_amap[4] = 0.94;
         // 65535 -> 1
         raster_amap[5] = 1.0;
-
-
-        // for(int i = 0; i<amapWidth; i++)
-        // {
-        //     raster_amap[i] = 0.2 * exp(-100 * ((i / float(amapWidth)) - sldr) * ((i / float(amapWidth)) - sldr));
-        // }
 
         glActiveTexture(GL_TEXTURE3);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -387,6 +370,8 @@ public:
             glEnable(GL_TEXTURE_1D);
             client->getRenderer()->beginDraw3D(context);
             glUseProgram(volRendShaderProg);
+            glEnable (GL_BLEND);
+            glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             volBlock.draw();
             glUseProgram(0);
             client->getRenderer()->endDraw();
@@ -436,8 +421,6 @@ BOOST_PYTHON_MODULE(volrend)
     // OmegaViewer
     PYAPI_REF_BASE_CLASS(VolumeRenderModule)
         PYAPI_METHOD(VolumeRenderModule, loadTiff)
-                //PYAPI_METHOD(VolumeRenderModule, loadRaw)
-
         ;
 
     def("initialize", initialize, PYAPI_RETURN_REF);

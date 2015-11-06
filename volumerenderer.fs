@@ -107,5 +107,6 @@ void main()
       rayPos += rayStep;
     }
 
+  //rayColor.a = 0.0;
   gl_FragColor = rayColor;
 }
